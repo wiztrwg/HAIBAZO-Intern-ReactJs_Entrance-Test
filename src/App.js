@@ -7,7 +7,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [started, setStarted] = useState(false);
-  const [numPoints, setNumPoints] = useState(10);
+  const [numPoints, setNumPoints] = useState(5);
   const [currentPoint, setCurrentPoint] = useState(1);
   const [allCleared, setAllCleared] = useState(false);
 
