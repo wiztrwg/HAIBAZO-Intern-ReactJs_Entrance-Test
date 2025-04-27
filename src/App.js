@@ -7,10 +7,11 @@ function App() {
   const [time, setTime] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [started, setStarted] = useState(false);
+  const [numPoints, setNumPoints] = useState(10);
 
-  const generatePoints = () => {
+  const generatePoints = (num) => {
     const newPoints = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= num; i++) {
       newPoints.push({
         id: i,
         x: Math.random() * 80 + 10,
@@ -24,7 +25,7 @@ function App() {
 
   useEffect(() => {
     if (started) {
-      generatePoints();
+      generatePoints(numPoints);
     }
   }, [started]);
 
@@ -48,26 +49,45 @@ function App() {
   };
 
   const handleStart = () => {
-    setStarted(true);
+    if (numPoints > 0) {
+      setStarted(true);
+    }
   };
 
   const handleRestart = () => {
-    generatePoints();
     setStarted(false);
+    setPoints([]);
+    setTime(0);
+    setGameOver(false);
+  };
+
+  const handleNumPointsChange = (e) => {
+    setNumPoints(Number(e.target.value));
   };
 
   return (
     <div className="App">
       <h1>LET'S PLAY</h1>
       <div className="info">
-        <p>Points: {points.length}</p>
+        <p>Points left: {points.length}</p>
         <p>Time: {time.toFixed(1)}s</p>
-        {gameOver ? (
-          <button onClick={handleRestart}>Restart</button>
-        ) : !started ? (
+
+        {!started && !gameOver && (
+          <>
+            <input
+              type="number"
+              value={numPoints}
+              onChange={handleNumPointsChange}
+              placeholder="Enter number of points"
+              min="1"
+            />
+          </>
+        )}
+
+        {!gameOver && !started ? (
           <button onClick={handleStart}>Start</button>
         ) : (
-          <button disabled>Game in Progress...</button>
+          <button onClick={handleRestart}>Restart</button>
         )}
       </div>
 
