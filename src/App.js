@@ -7,7 +7,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [started, setStarted] = useState(false);
-  const [numPoints, setNumPoints] = useState(5);
+  const [numPoints, setNumPoints] = useState(10);
   const [currentPoint, setCurrentPoint] = useState(1);
   const [allCleared, setAllCleared] = useState(false);
 
@@ -35,13 +35,13 @@ function App() {
 
   useEffect(() => {
     let timer;
-    if (!gameOver && started) {
+    if (!gameOver && !allCleared && started) {
       timer = setInterval(() => {
         setTime((prev) => prev + 0.1);
       }, 100);
     }
     return () => clearInterval(timer);
-  }, [gameOver, started]);
+  }, [gameOver, allCleared, started]);
 
   const handleClick = (id) => {
     if (id === currentPoint) {
@@ -82,7 +82,6 @@ function App() {
       <div className="info">
         <p>Points left: {points.length}</p>
         <p>Time: {time.toFixed(1)}s</p>
-
         {!started && !gameOver && (
           <>
             <input
@@ -94,7 +93,6 @@ function App() {
             />
           </>
         )}
-
         {!gameOver && !started ? (
           <button onClick={handleStart}>Start</button>
         ) : (
