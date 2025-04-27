@@ -8,6 +8,8 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [started, setStarted] = useState(false);
   const [numPoints, setNumPoints] = useState(10);
+  const [currentPoint, setCurrentPoint] = useState(1);
+  const [allCleared, setAllCleared] = useState(false);
 
   const generatePoints = (num) => {
     const newPoints = [];
@@ -21,6 +23,8 @@ function App() {
     setPoints(newPoints);
     setGameOver(false);
     setTime(0);
+    setAllCleared(false);
+    setCurrentPoint(1);
   };
 
   useEffect(() => {
@@ -40,10 +44,15 @@ function App() {
   }, [gameOver, started]);
 
   const handleClick = (id) => {
-    const newPoints = points.filter((point) => point.id !== id);
-    setPoints(newPoints);
+    if (id === currentPoint) {
+      const newPoints = points.filter((point) => point.id !== id);
+      setPoints(newPoints);
+      setCurrentPoint(currentPoint + 1);
 
-    if (newPoints.length === 0) {
+      if (newPoints.length === 0) {
+        setAllCleared(true);
+      }
+    } else {
       setGameOver(true);
     }
   };
@@ -59,6 +68,8 @@ function App() {
     setPoints([]);
     setTime(0);
     setGameOver(false);
+    setAllCleared(false);
+    setCurrentPoint(1);
   };
 
   const handleNumPointsChange = (e) => {
@@ -101,7 +112,8 @@ function App() {
             onClick={handleClick}
           />
         ))}
-        {gameOver && <div className="all-cleared">ALL CLEARED</div>}
+        {allCleared && <div className="all-cleared">ALL CLEARED</div>}
+        {gameOver && !allCleared && <div className="game-over">GAME OVER</div>}
       </div>
     </div>
   );
