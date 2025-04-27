@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Point from "./Point";
 
 function App() {
   const [points, setPoints] = useState([]);
   const [time, setTime] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [started, setStarted] = useState(false);
 
   const generatePoints = () => {
     const newPoints = [];
@@ -21,18 +23,20 @@ function App() {
   };
 
   useEffect(() => {
-    generatePoints();
-  }, []);
+    if (started) {
+      generatePoints();
+    }
+  }, [started]);
 
   useEffect(() => {
     let timer;
-    if (!gameOver) {
+    if (!gameOver && started) {
       timer = setInterval(() => {
         setTime((prev) => prev + 0.1);
       }, 100);
     }
     return () => clearInterval(timer);
-  }, [gameOver]);
+  }, [gameOver, started]);
 
   const handleClick = (id) => {
     const newPoints = points.filter((point) => point.id !== id);
@@ -43,8 +47,13 @@ function App() {
     }
   };
 
+  const handleStart = () => {
+    setStarted(true);
+  };
+
   const handleRestart = () => {
     generatePoints();
+    setStarted(false);
   };
 
   return (
@@ -53,19 +62,24 @@ function App() {
       <div className="info">
         <p>Points: {points.length}</p>
         <p>Time: {time.toFixed(1)}s</p>
-        <button onClick={handleRestart}>Restart</button>
+        {gameOver ? (
+          <button onClick={handleRestart}>Restart</button>
+        ) : !started ? (
+          <button onClick={handleStart}>Start</button>
+        ) : (
+          <button disabled>Game in Progress...</button>
+        )}
       </div>
 
       <div className="container">
         {points.map((point) => (
-          <div
+          <Point
             key={point.id}
-            className="point"
-            style={{ left: `${point.x}%`, top: `${point.y}%` }}
-            onClick={() => handleClick(point.id)}
-          >
-            {point.id}
-          </div>
+            id={point.id}
+            x={point.x}
+            y={point.y}
+            onClick={handleClick}
+          />
         ))}
         {gameOver && <div className="all-cleared">ALL CLEARED</div>}
       </div>
